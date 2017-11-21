@@ -15,10 +15,12 @@
  */
 package org.gradle.api.internal.artifacts.ivyservice.moduleconverter.dependencies;
 
+import org.gradle.api.artifacts.DependencyConstraint;
 import org.gradle.api.artifacts.ModuleDependency;
 import org.gradle.api.attributes.AttributeContainer;
 import org.gradle.internal.component.model.LocalOriginDependencyMetadata;
 
 public interface DependencyDescriptorFactory {
     LocalOriginDependencyMetadata createDependencyDescriptor(String clientConfiguration, AttributeContainer attributes, ModuleDependency dependency);
+    LocalOriginDependencyMetadata createDependencyConstraintDescriptor(String clientConfiguration, AttributeContainer attributes, DependencyConstraint dependencyConstraint);
 }
