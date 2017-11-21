@@ -154,7 +154,7 @@ public class DefaultLibraryLocalComponentMetadata extends DefaultLocalComponentM
             selector, usageConfigurationName, null, mappedUsageConfiguration,
             Collections.<IvyArtifactName>emptySet(),
             EXCLUDE_RULES,
-            false, false, true);
+            false, false, true, false);
     }
 
 }

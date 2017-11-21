@@ -45,7 +45,7 @@ public class ExternalModuleIvyDependencyDescriptorFactory extends AbstractIvyDep
         LocalComponentDependencyMetadata dependencyMetaData = new LocalComponentDependencyMetadata(
                 selector, clientConfiguration, clientAttributes, dependency.getTargetConfiguration(),
                 convertArtifacts(dependency.getArtifacts()),
-                excludes, force, changing, transitive);
+                excludes, force, changing, transitive, false);
         return new DslOriginDependencyMetadataWrapper(dependencyMetaData, dependency);
     }
 

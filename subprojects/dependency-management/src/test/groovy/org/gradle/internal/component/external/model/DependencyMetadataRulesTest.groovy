@@ -212,7 +212,7 @@ class DependencyMetadataRulesTest extends Specification {
         def consumerIdentifier = new DefaultModuleVersionIdentifier("org.test", "consumer", "1.0")
         def componentSelector = newSelector(consumerIdentifier.group, consumerIdentifier.name, new DefaultMutableVersionConstraint(consumerIdentifier.version))
         def consumerResolveMetadata = new DefaultMutableMavenModuleResolveMetadata(consumerIdentifier, DefaultModuleComponentIdentifier.newId(consumerIdentifier)).asImmutable()
-        def consumer = new LocalComponentDependencyMetadata(componentSelector, "default", attributes, null, [] as Set, [], false, false, true)
+        def consumer = new LocalComponentDependencyMetadata(componentSelector, "default", attributes, null, [] as Set, [], false, false, true, false)
 
         consumer.selectConfigurations(attributes, consumerResolveMetadata, consumerResolveMetadata.getConfiguration("default"), targetComponent.asImmutable(), schema)[0]
     }

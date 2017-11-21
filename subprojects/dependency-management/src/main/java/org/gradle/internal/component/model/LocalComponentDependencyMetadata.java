@@ -41,6 +41,7 @@ public class LocalComponentDependencyMetadata extends AbstractDependencyMetadata
     private final boolean force;
     private final boolean changing;
     private final boolean transitive;
+    private final boolean optional;
 
     private final AttributeContainer moduleAttributes;
 
@@ -49,7 +50,7 @@ public class LocalComponentDependencyMetadata extends AbstractDependencyMetadata
                                             AttributeContainer moduleAttributes,
                                             String dependencyConfiguration,
                                             Set<IvyArtifactName> artifactNames, List<Exclude> excludes,
-                                            boolean force, boolean changing, boolean transitive) {
+                                            boolean force, boolean changing, boolean transitive, boolean optional) {
         this.selector = selector;
         this.moduleConfiguration = moduleConfiguration;
         this.moduleAttributes = moduleAttributes;
@@ -59,6 +60,7 @@ public class LocalComponentDependencyMetadata extends AbstractDependencyMetadata
         this.force = force;
         this.changing = changing;
         this.transitive = transitive;
+        this.optional = optional;
     }
 
     @Override
@@ -144,7 +146,7 @@ public class LocalComponentDependencyMetadata extends AbstractDependencyMetadata
 
     @Override
     public boolean isOptional() {
-        return false;
+        return optional;
     }
 
     @Override
@@ -173,6 +175,6 @@ public class LocalComponentDependencyMetadata extends AbstractDependencyMetadata
     }
 
     private LocalOriginDependencyMetadata copyWithTarget(ComponentSelector selector) {
-        return new LocalComponentDependencyMetadata(selector, moduleConfiguration, moduleAttributes, dependencyConfiguration, artifactNames, excludes, force, changing, transitive);
+        return new LocalComponentDependencyMetadata(selector, moduleConfiguration, moduleAttributes, dependencyConfiguration, artifactNames, excludes, force, changing, transitive, optional);
     }
 }
