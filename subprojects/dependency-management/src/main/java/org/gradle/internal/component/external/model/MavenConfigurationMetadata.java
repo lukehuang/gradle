@@ -22,8 +22,8 @@ import org.gradle.api.internal.artifacts.ivyservice.resolveengine.excludes.Modul
 import org.gradle.api.internal.artifacts.ivyservice.resolveengine.excludes.ModuleExclusions;
 
 class MavenConfigurationMetadata extends DefaultConfigurationMetadata {
-    MavenConfigurationMetadata(ModuleComponentIdentifier componentId, String name, boolean transitive, boolean visible, ImmutableList<MavenConfigurationMetadata> parents, ImmutableList<? extends ModuleComponentArtifactMetadata> artifacts) {
-        super(componentId, name, transitive, visible, parents, artifacts);
+    MavenConfigurationMetadata(ModuleComponentIdentifier componentId, String name, boolean transitive, boolean visible, ImmutableList<String> hierarchy, ImmutableList<? extends ModuleComponentArtifactMetadata> artifacts) {
+        super(componentId, name, transitive, visible, hierarchy, artifacts);
     }
 
     @Override
