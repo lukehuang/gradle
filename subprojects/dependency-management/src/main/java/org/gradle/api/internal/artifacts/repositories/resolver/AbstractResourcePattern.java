@@ -22,25 +22,38 @@ import org.gradle.internal.component.external.model.ModuleComponentArtifactMetad
 import org.gradle.internal.component.model.IvyArtifactName;
 import org.gradle.internal.resource.ExternalResourceName;
 
+import javax.annotation.Nullable;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
 abstract class AbstractResourcePattern implements ResourcePattern {
+    public static final String CLASSIFIER_KEY = "classifier";
     private final ExternalResourceName pattern;
     private final boolean revisionIsOptional;
     private final boolean organisationIsOptional;
+    private final boolean artifactIsOptional;
+    private final boolean classifierIsOptional;
+    private final boolean extensionIsOptional;
+    private final boolean typeIsOptional;
 
     public AbstractResourcePattern(String pattern) {
-        this.pattern = new ExternalResourceName(pattern);
-        this.revisionIsOptional = isOptionalToken(IvyPatternHelper.REVISION_KEY);
-        this.organisationIsOptional = isOptionalToken(IvyPatternHelper.ORGANISATION_KEY, IvyPatternHelper.ORGANISATION_KEY2);
+        this(new ExternalResourceName(pattern));
+
     }
 
     public AbstractResourcePattern(URI baseUri, String pattern) {
-        this.pattern = new ExternalResourceName(baseUri, pattern);
+        this(new ExternalResourceName(baseUri, pattern));
+    }
+
+    private AbstractResourcePattern(ExternalResourceName pattern) {
+        this.pattern = pattern;
         this.revisionIsOptional = isOptionalToken(IvyPatternHelper.REVISION_KEY);
         this.organisationIsOptional = isOptionalToken(IvyPatternHelper.ORGANISATION_KEY, IvyPatternHelper.ORGANISATION_KEY2);
+        this.artifactIsOptional = isOptionalToken(IvyPatternHelper.ARTIFACT_KEY);
+        this.classifierIsOptional = isOptionalToken(CLASSIFIER_KEY);
+        this.extensionIsOptional = isOptionalToken(IvyPatternHelper.EXT_KEY);
+        this.typeIsOptional = isOptionalToken(IvyPatternHelper.TYPE_KEY);
     }
 
     public String getPattern() {
@@ -72,7 +85,7 @@ abstract class AbstractResourcePattern implements ResourcePattern {
         attributes.put(IvyPatternHelper.ARTIFACT_KEY, ivyArtifact.getName());
         attributes.put(IvyPatternHelper.TYPE_KEY, ivyArtifact.getType());
         attributes.put(IvyPatternHelper.EXT_KEY, ivyArtifact.getExtension());
-        attributes.put("classifier", ivyArtifact.getClassifier());
+        attributes.put(CLASSIFIER_KEY, ivyArtifact.getClassifier());
         return attributes;
     }
 
@@ -93,15 +106,32 @@ abstract class AbstractResourcePattern implements ResourcePattern {
 
     @Override
     public boolean isComplete(ModuleIdentifier moduleIdentifier) {
-        return !moduleIdentifier.getName().isEmpty()
-            && (!moduleIdentifier.getGroup().isEmpty() || organisationIsOptional);
+        return isValidSubstitute(moduleIdentifier.getName())
+            && (isValidSubstitute(moduleIdentifier.getGroup()) || organisationIsOptional);
     }
 
     @Override
     public boolean isComplete(ModuleComponentIdentifier componentIdentifier) {
-        return !componentIdentifier.getModule().isEmpty()
-            && (!componentIdentifier.getGroup().isEmpty() || organisationIsOptional)
-            && (!componentIdentifier.getVersion().isEmpty() || revisionIsOptional);
+        return isValidSubstitute(componentIdentifier.getModule())
+            && (isValidSubstitute(componentIdentifier.getGroup()) || organisationIsOptional)
+            && (isValidSubstitute(componentIdentifier.getVersion()) || revisionIsOptional);
+    }
+
+    @Override
+    public boolean isComplete(ModuleComponentArtifactMetadata artifactIdentifier) {
+        IvyArtifactName artifactName = artifactIdentifier.getName();
+        ModuleComponentIdentifier componentIdentifier = artifactIdentifier.getId().getComponentIdentifier();
+        return isValidSubstitute(componentIdentifier.getModule())
+            && (isValidSubstitute(componentIdentifier.getGroup()) || organisationIsOptional)
+            && (isValidSubstitute(componentIdentifier.getVersion()) || revisionIsOptional)
+            && (isValidSubstitute(artifactName.getName()) || artifactIsOptional)
+            && (isValidSubstitute(artifactName.getClassifier()) || classifierIsOptional)
+            && (isValidSubstitute(artifactName.getExtension()) || extensionIsOptional)
+            && (isValidSubstitute(artifactName.getType()) || typeIsOptional);
+    }
+
+    private boolean isValidSubstitute(@Nullable String candidate) {
+        return candidate == null || (!candidate.isEmpty() && !candidate.startsWith("${"));
     }
 
     private boolean isOptionalToken(String... tokenVariants) {
